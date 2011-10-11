@@ -129,8 +129,8 @@ package com.pblabs.core
 
             _components[component.name] = null;
             delete _components[component.name];
+
             component.doRemove();
-            component._owner = null;
         }
 
         /**

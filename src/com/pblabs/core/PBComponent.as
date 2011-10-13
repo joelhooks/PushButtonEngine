@@ -16,6 +16,8 @@ package com.pblabs.core
      */
     public class PBComponent
     {
+        private static const DEFAULT_BINDING_STRING_SEPARATOR:String = "||";
+
         [Inject]
         public var propertyManager:PropertyManager;
 
@@ -62,30 +64,52 @@ package com.pblabs.core
          *                          PBGameObject, or other part of the system.
          *                          Usually "@componentName.fieldName".
          */
-        public function addBinding(fieldName:String, propertyReference:String):void
+        public function addBinding(fieldName:String, propertyReference:String):Boolean
         {
             if(!bindings)
                 bindings = new Vector.<String>();
 
-            const binding:String = fieldName + "||" + propertyReference;
+            const binding:String = createBindingLabel(fieldName, propertyReference);
 
             bindings.push(binding);
+
+            return true;
         }
 
         /**
          * Remove a binding previously added with addBinding. Call with identical
          * parameters.
          */
-        public function removeBinding(fieldName:String, propertyReference:String):void
+        public function removeBinding(fieldName:String, propertyReference:String):Boolean
         {
             if(!bindings)
-                return;
+                return false;
 
-            const binding:String = fieldName + "||" + propertyReference;
+            const binding:String = createBindingLabel(fieldName, propertyReference);
             var idx:int = bindings.indexOf(binding);
+
             if(idx == -1)
-                return;
+                return false;
+
             bindings.splice(idx, 1);
+
+            return true;
+        }
+
+        public function hasBinding(fieldName:String, propertyReference:String):Boolean
+        {
+            if(!bindings)
+                return false;
+
+            const binding:String = createBindingLabel(fieldName, propertyReference);
+            var bindingIndex:int = bindings.indexOf(binding);
+
+            return bindingIndex != -1;
+        }
+
+        private function createBindingLabel(fieldName:String, propertyReference:String):String
+        {
+            return fieldName + DEFAULT_BINDING_STRING_SEPARATOR + propertyReference;
         }
 
         /**
